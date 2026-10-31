@@ -729,6 +729,9 @@ table.blank td { min-width: 62px; height: 28px; font-family: var(--mono); }
 .lab-head.compact .in { padding-block: 18px 16px; }
 .lab-head.compact p { display: none; }
 .lab-head.compact h1 { font-size: clamp(24px, 3.4vw, 32px); margin-bottom: 0; }
+.steps { grid-template-columns: minmax(0, 1fr); }
+.step { grid-template-columns: 46px minmax(0, 1fr); }
+.step .calc { overflow-wrap: anywhere; }
 .partband .L { flex: none; }
 .partband h2 { margin: 0; }
 .s-checks > li { margin-bottom: 2px; }
@@ -3722,6 +3725,8 @@ body:not(.at-home) .topbar .in { max-width: none; padding-inline: 20px; }
   function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
 
   function attachLab(id) {
+    const lab = DATA.labs[id], root = document.documentElement.style;
+    root.setProperty('--acc', lab.acc); root.setProperty('--acc-soft', lab.soft); root.setProperty('--acc-deep', lab.deep); root.setProperty('--acc-bright', lab.bright);
     if (curLab === id && host.childElementCount) return;
     host.textContent = '';
     if (!mounted[id]) {
@@ -3730,8 +3735,6 @@ body:not(.at-home) .topbar .in { max-width: none; padding-inline: 20px; }
       mounted[id] = { node, pages: {} };
     }
     host.append(mounted[id].node);
-    const lab = DATA.labs[id], root = document.documentElement.style;
-    root.setProperty('--acc', lab.acc); root.setProperty('--acc-soft', lab.soft); root.setProperty('--acc-deep', lab.deep); root.setProperty('--acc-bright', lab.bright);
     curLab = id;
   }
   function paintDone(root) {
@@ -3802,6 +3805,7 @@ body:not(.at-home) .topbar .in { max-width: none; padding-inline: 20px; }
     } else {
       const anchor = id && id !== 'home' && document.getElementById(id);
       const wasLab = !host.hidden;
+      ['--acc', '--acc-soft', '--acc-deep', '--acc-bright'].forEach(v => document.documentElement.style.removeProperty(v));
       document.body.classList.add('at-home');
       home.hidden = false; host.hidden = true; shell.hidden = true; $('lab-foot').hidden = true;
       navEl.textContent = ''; crumb.textContent = '';
